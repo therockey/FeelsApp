@@ -1,0 +1,33 @@
+name: Android CI (Test + Build)
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ "**" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🧾 Checkout code
+        uses: actions/checkout@v4
+
+      - name: ☕ Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: 📱 Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: ✅ Grant execute permission to gradlew
+        run: chmod +x ./gradlew
+
+      - name: 🧪 Run unit tests
+        run: ./gradlew testDebugUnitTest
+
+      - name: 🏗️ Build APK
+        run: ./gradlew assembleDebug
